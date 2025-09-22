@@ -94,7 +94,7 @@ export default function CrearAsientoPage() {
 
   useEffect(() => {
     fetchListaCuentas();
-  }, [fetchListaCuentas]);
+  }, [fetchListaCuentas, apiUrl]);
 
   // --- Lógica del Formulario ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

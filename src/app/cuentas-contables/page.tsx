@@ -93,11 +93,11 @@ export default function CuentasContablesPage() {
     }
   };
   // EVENTO PARA QUE AL ENTRAR A LA PESTAÑA SE OBTENGA LAS CUENTAS
-  useEffect(() => {
-    if (!authLoading) {
-      fetchCuentas();
-    }
-  }, [authLoading]);
+ useEffect(() => {
+  if (!authLoading && apiUrl) {
+    fetchCuentas();
+  }
+}, [authLoading, apiUrl]);
 
   // EVENTO PARA QUE EL FORMULARIO PUEDA ESCRIBIR
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -103,7 +103,7 @@ export default function CuentaDetallePage() {
       };
       fetchData();
     }
-  }, [id, authLoading]);
+  }, [id, authLoading,apiUrl]);
 
   if (loading || authLoading) {
     return (

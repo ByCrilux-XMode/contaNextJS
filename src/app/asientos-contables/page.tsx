@@ -73,7 +73,7 @@ export default function AsientosContablesPage() {
     if (!authLoading) {
       fetchCuentas();
     }
-  }, [authLoading]);
+  }, [authLoading, apiUrl]);
 
   // EVENTO PARA BORRAR CUENTA
   const handleDelete = async (id: string) => {
