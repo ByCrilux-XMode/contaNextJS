@@ -96,9 +96,10 @@ export default function CrearAsientoPage() {
   }, []);
 
  useEffect(() => {
-  if (!apiUrl) return;
-  fetchListaCuentas(apiUrl);
-}, [apiUrl, fetchListaCuentas]);
+  if (apiUrl){
+    fetchListaCuentas(apiUrl);
+  }
+  }, [apiUrl, fetchListaCuentas]);
 
   // --- Lógica del Formulario ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,7 +236,7 @@ export default function CrearAsientoPage() {
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full">
-                  {/* ... Encabezados de la tabla ... */}
+                  {/* ... Encabezados de la tabla ... */}4
                   <tbody>
                     {formData.movimientos.map((mov) => (
                       <tr key={mov.id}>
