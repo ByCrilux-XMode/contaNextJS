@@ -75,7 +75,7 @@ export default function AsientosContablesPage() {
 
   // EVENTO PARA QUE AL ENTRAR A LA PESTAÑA SE OBTENGA LAS CUENTAS
   useEffect(() => {
-    if (!authLoading) {
+    if (!authLoading && apiUrl) {
       fetchCuentas();
     }
   }, [authLoading, apiUrl]);

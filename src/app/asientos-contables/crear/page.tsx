@@ -70,7 +70,7 @@ export default function CrearAsientoPage() {
   }, []);
 
   // --- Carga de Datos ---
-  const fetchListaCuentas = useCallback(async () => {
+  const fetchListaCuentas = useCallback(async (url :string) => {
     setLoadingCuentas(true);
     try {
       const token = localStorage.getItem('token');
@@ -95,9 +95,10 @@ export default function CrearAsientoPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchListaCuentas();
-  }, [fetchListaCuentas, apiUrl]);
+ useEffect(() => {
+  if (!apiUrl) return;
+  fetchListaCuentas(apiUrl);
+}, [apiUrl, fetchListaCuentas]);
 
   // --- Lógica del Formulario ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
