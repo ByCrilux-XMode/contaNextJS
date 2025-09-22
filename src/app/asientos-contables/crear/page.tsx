@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProtectedRoute from '../../../components/ProtectedRoute';
+import { useAuth } from "../../hooks/useAuth";
 {/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 
 // --- Interfaces ---
@@ -50,6 +51,7 @@ export default function CrearAsientoPage() {
   const [loadingCuentas, setLoadingCuentas] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
+  const { user, logout, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const getApiUrlAndFetch = async () => {
@@ -70,12 +72,12 @@ export default function CrearAsientoPage() {
   }, []);
 
   // --- Carga de Datos ---
-  const fetchListaCuentas = useCallback(async (url :string) => {
+  const fetchListaCuentas = useCallback(async () => {
     setLoadingCuentas(true);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
@@ -96,10 +98,10 @@ export default function CrearAsientoPage() {
   }, []);
 
  useEffect(() => {
-  if (apiUrl){
-    fetchListaCuentas(apiUrl);
+  if (!authLoading && apiUrl){
+    fetchListaCuentas();
   }
-  }, [apiUrl, fetchListaCuentas]);
+  }, [apiUrl, authLoading]);
 
   // --- Lógica del Formulario ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
