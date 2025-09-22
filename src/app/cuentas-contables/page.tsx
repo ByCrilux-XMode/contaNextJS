@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import ClaseCuentaModal from "@/components/ClaseCuentaModal";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+{/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 
 interface CuentaContable {
   id: string;
@@ -33,6 +33,23 @@ export default function CuentasContablesPage() {
     codigo: "",
     nombre: "",
   });
+
+  const [apiUrl, setApiUrl] = useState('');
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
+
   //FUNCION PARA OBTENER EL TIPO DE CUENTA
   const getTipoCuenta = (codigo: string): string => {
     const codigoStr = String(codigo);
@@ -57,7 +74,7 @@ export default function CuentasContablesPage() {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/cuentas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,7 +113,7 @@ export default function CuentasContablesPage() {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/cuentas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +146,7 @@ export default function CuentasContablesPage() {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://127.0.0.1:8000/cuentas/${id}/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/${id}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

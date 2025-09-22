@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+//const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface User {
   id: string;
@@ -14,6 +14,22 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [apiUrl, setApiUrl] = useState('');
+
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
 
   // Función para obtener cookie por nombre
   const getCookie = (name: string): string | null => {
@@ -72,7 +88,7 @@ export function useAuth() {
     setUser(null);
     
     // Intentar hacer logout en el backend (opcional)
-    fetch(`${apiUrl}/auth/logout/`, {
+    fetch(`${apiUrl.replace(/\/$/, '')}/auth/logout/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,

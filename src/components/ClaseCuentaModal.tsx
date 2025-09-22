@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+//const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface ClaseCuenta {
   codigo: string;
@@ -23,7 +23,23 @@ export default function ClaseCuentaModal({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [apiUrl, setApiUrl] = useState('');
 
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -38,7 +54,7 @@ export default function ClaseCuentaModal({
     console.log(formData);
     try {
       console.log("Body que se enviará:", JSON.stringify(formData));
-      const response = await fetch(`${apiUrl}/clase_cuenta/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/clase_cuenta/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

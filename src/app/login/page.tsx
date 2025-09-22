@@ -35,6 +35,7 @@ export default function LoginPage() {
       console.error("Error al obtener apiUrl:", err);
     });
   }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+{/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 
 interface AsientoContable {
   id: string;
@@ -28,13 +28,29 @@ export default function AsientosContablesPage() {
   const { user, logout, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [apiUrl, setApiUrl] = useState('');
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
+
   // EVENTO PARA OBTENER LAS CUENTAS
   const fetchCuentas = async () => {
     setLoading(true);
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/asiento_contable/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/asiento_contable/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

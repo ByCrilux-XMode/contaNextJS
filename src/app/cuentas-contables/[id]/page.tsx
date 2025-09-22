@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 import Link from "next/link";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+{/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 
 // Interfaces (puedes moverlas a un archivo compartido si las usas en otros lugares)
 interface CuentaContable {
@@ -39,6 +39,23 @@ export default function CuentaDetallePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [apiUrl, setApiUrl] = useState('');
+
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
+
   useEffect(() => {
     if (id && !authLoading) {
       const fetchData = async () => {
@@ -49,7 +66,7 @@ export default function CuentaDetallePage() {
 
           // 1. Obtener detalles de la cuenta
           const cuentaResponse = await fetch(
-            `${apiUrl}/cuentas/${id}/`,
+            `${apiUrl.replace(/\/$/, '')}/cuentas/${id}/`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -63,7 +80,7 @@ export default function CuentaDetallePage() {
           // Si tu endpoint es diferente, ajústalo aquí.
 
           const movimientosResponse = await fetch(
-            `${apiUrl}/cuentas/${id}/movimientos/`,
+            `${apiUrl.replace(/\/$/, '')}/cuentas/${id}/movimientos/`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

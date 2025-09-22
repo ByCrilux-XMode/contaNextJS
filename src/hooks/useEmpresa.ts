@@ -7,12 +7,28 @@ interface Empresa {
   nombre: string;
   usuario: string;
 }
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+//const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export function useEmpresa() {
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
+
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
 
   const verificarEmpresa = async () => {
     try {
@@ -26,7 +42,7 @@ export function useEmpresa() {
         return;
       }
       console.log(token)
-      const response = await fetch(`${apiUrl}/empresas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/empresas/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -64,7 +80,7 @@ export function useEmpresa() {
         throw new Error('No hay token de autenticación');
       }
 
-      const response = await fetch(`${apiUrl}/empresas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/empresas/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

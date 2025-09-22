@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+//onst apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface Empresa {
   id: string;
@@ -21,6 +21,22 @@ export default function EmpresaModal({ isOpen, onClose, onEmpresaCreated }: Empr
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
+
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -36,7 +52,7 @@ export default function EmpresaModal({ isOpen, onClose, onEmpresaCreated }: Empr
 
     try {
       
-      const response = await fetch(`${apiUrl}/empresas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/empresas/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

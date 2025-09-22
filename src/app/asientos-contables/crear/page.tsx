@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProtectedRoute from '../../../components/ProtectedRoute';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+{/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 
 // --- Interfaces ---
 interface Cuenta {
@@ -49,13 +49,29 @@ export default function CrearAsientoPage() {
   const [listaCuentas, setListaCuentas] = useState<Cuenta[]>([]);
   const [loadingCuentas, setLoadingCuentas] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiUrl, setApiUrl] = useState('');
+
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
 
   // --- Carga de Datos ---
   const fetchListaCuentas = useCallback(async () => {
     setLoadingCuentas(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/cuentas/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       if (!response.ok) {
@@ -153,11 +169,12 @@ export default function CrearAsientoPage() {
     console.log(payload)
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/asiento_contable/', {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/asiento_contable/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
+
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
