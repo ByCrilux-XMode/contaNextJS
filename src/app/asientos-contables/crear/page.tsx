@@ -72,30 +72,29 @@ export default function CrearAsientoPage() {
   }, []);
 
   // --- Carga de Datos ---
-  const fetchListaCuentas = useCallback(async () => {
+    const fetchListaCuentas = async () => {
     setLoadingCuentas(true);
+    setError(null);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl.replace(/\/$/, '')}/cuentas/`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!response.ok) {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Error al obtener el plan de cuentas.');
-        } else {
-          throw new Error(`Error ${response.status}: La sesión puede haber expirado. Por favor, inicie sesión de nuevo.`);
-        }
+        throw new Error("Error al obtener las cuentas contables.");
       }
       const data = await response.json();
+      console.log(data);
+
       setListaCuentas(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoadingCuentas(false);
     }
-  }, []);
+  };
 
  useEffect(() => {
   if (!authLoading && apiUrl){
