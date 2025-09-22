@@ -21,6 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const router = useRouter();
   const [apiUrl, setApiUrl] = useState('');
+
   useEffect(() => {
   fetch("/api/config")
     .then((res) => res.json())
@@ -35,12 +36,7 @@ export default function RegisterPage() {
       console.error("Error al obtener apiUrl:", err);
     });
   }, []);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
