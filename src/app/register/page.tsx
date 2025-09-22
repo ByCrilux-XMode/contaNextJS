@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = "https://contadjango-393159630636.europe-west1.run.app";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
