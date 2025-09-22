@@ -16,18 +16,21 @@ export function useEmpresa() {
   const [apiUrl, setApiUrl] = useState('');
 
   useEffect(() => {
-  fetch("/api/config")
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.apiUrl) {
-        setApiUrl(data.apiUrl);
-      } else {
-        console.error("No se recibió apiUrl desde /api/config");
+    const getApiUrlAndFetch = async () => {
+      try {
+        const res = await fetch("/api/config");
+        const data = await res.json();
+        if (data.apiUrl) {
+          setApiUrl(data.apiUrl);
+        } else {
+          console.error("No se recibió apiUrl desde /api/config");
+        }
+      } catch (err) {
+        console.error("Error al obtener apiUrl:", err);
       }
-    })
-    .catch((err) => {
-      console.error("Error al obtener apiUrl:", err);
-    });
+    };
+
+    getApiUrlAndFetch();
   }, []);
 
   const verificarEmpresa = async () => {

@@ -28,20 +28,24 @@ export default function AsientosContablesPage() {
   const { user, logout, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
   const [apiUrl, setApiUrl] = useState('');
   useEffect(() => {
-  fetch("/api/config")
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.apiUrl) {
-        setApiUrl(data.apiUrl);
-      } else {
-        console.error("No se recibió apiUrl desde /api/config");
+    const getApiUrlAndFetch = async () => {
+      try {
+        const res = await fetch("/api/config");
+        const data = await res.json();
+        if (data.apiUrl) {
+          setApiUrl(data.apiUrl);
+        } else {
+          console.error("No se recibió apiUrl desde /api/config");
+        }
+      } catch (err) {
+        console.error("Error al obtener apiUrl:", err);
       }
-    })
-    .catch((err) => {
-      console.error("Error al obtener apiUrl:", err);
-    });
+    };
+
+    getApiUrlAndFetch();
   }, []);
 
   // EVENTO PARA OBTENER LAS CUENTAS
@@ -68,6 +72,7 @@ export default function AsientosContablesPage() {
       setLoading(false);
     }
   };
+
   // EVENTO PARA QUE AL ENTRAR A LA PESTAÑA SE OBTENGA LAS CUENTAS
   useEffect(() => {
     if (!authLoading) {
