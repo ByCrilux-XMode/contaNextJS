@@ -103,9 +103,11 @@ export function useEmpresa() {
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
+  if (apiUrl) {
     verificarEmpresa();
-  }, []);
+  }
+}, [apiUrl]);
 
   return {
     empresa,
