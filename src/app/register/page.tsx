@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
+{/*const apiUrl = process.env.NEXT_PUBLIC_API_URL;*/}
 export default function RegisterPage() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const [formData, setFormData] = useState({
     username: '',
@@ -21,7 +20,27 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-
+  const [apiUrl, setApiUrl] = useState('');
+  useEffect(() => {
+  fetch("/api/config")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.apiUrl) {
+        setApiUrl(data.apiUrl);
+      } else {
+        console.error("No se recibió apiUrl desde /api/config");
+      }
+    })
+    .catch((err) => {
+      console.error("Error al obtener apiUrl:", err);
+    });
+  }, []);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
@@ -47,7 +66,7 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const response = await fetch(`${apiUrl}/auth/register/`, {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/auth/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
